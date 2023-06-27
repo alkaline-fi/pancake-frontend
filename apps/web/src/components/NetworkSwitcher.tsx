@@ -26,12 +26,12 @@ import Image from 'next/image'
 import { ASSET_CDN } from 'config/constants/endpoints'
 
 import { ChainLogo } from './Logo/ChainLogo'
-
+/* 
 const AptosChain = {
   id: 1,
   name: 'Aptos',
 }
-
+ */
 const NetworkSelect = ({ switchNetwork, chainId }) => {
   const { t } = useTranslation()
 
@@ -58,6 +58,7 @@ const NetworkSelect = ({ switchNetwork, chainId }) => {
             </Text>
           </UserMenuItem>
         ))}
+      {/* 
       <UserMenuItem
         key={`aptos-${AptosChain.id}`}
         style={{ justifyContent: 'flex-start' }}
@@ -76,6 +77,7 @@ const NetworkSelect = ({ switchNetwork, chainId }) => {
           {AptosChain.name}
         </Text>
       </UserMenuItem>
+       */}
     </>
   )
 }

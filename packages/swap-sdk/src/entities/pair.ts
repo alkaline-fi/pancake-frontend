@@ -48,13 +48,14 @@ function getCreate2Address(
   return getAddress(slice(keccak256(concat([toBytes('0xff'), from, salt, toBytes(initCodeHash)])), 12))
 }
 
-const EMPTY_INPU_HASH = '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'
+const EMPTY_INPUT_HASH = '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470'
 const ZKSYNC_PREFIX = '0x2020dba91b30cc0006188af794c2fb30dd8520db7e2c088b7fc7c103c00ca494' // keccak256('zksyncCreate2')
 
 function getCreate2AddressZkSync(from: Address, salt: `0x${string}`, initCodeHash: `0x${string}`): `0x${string}` {
-  return getAddress(
-    keccak256(concat([ZKSYNC_PREFIX, pad(from, { size: 32 }), salt, initCodeHash, EMPTY_INPU_HASH])).slice(26)
-  )
+  const addressBytes = keccak256(
+    concat([ZKSYNC_PREFIX, pad(from, { size: 32 }), salt, initCodeHash, EMPTY_INPUT_HASH])
+  ).slice(26)
+  return getAddress(`0x${addressBytes}`)
 }
 
 export const computePairAddress = ({
@@ -227,7 +228,7 @@ export class Pair {
       : [tokenAmountB, tokenAmountA]
     invariant(tokenAmounts[0].currency.equals(this.token0) && tokenAmounts[1].currency.equals(this.token1), 'TOKEN')
 
-    let liquidity: bigint
+    let liquidity: bigint | null
     if (totalSupply.quotient === ZERO) {
       liquidity = sqrt(tokenAmounts[0].quotient * tokenAmounts[1].quotient) - MINIMUM_LIQUIDITY
     } else {
@@ -253,7 +254,7 @@ export class Pair {
     invariant(liquidity.currency.equals(this.liquidityToken), 'LIQUIDITY')
     invariant(liquidity.quotient <= totalSupply.quotient, 'LIQUIDITY')
 
-    let totalSupplyAdjusted: CurrencyAmount<ERC20Token>
+    let totalSupplyAdjusted: CurrencyAmount<ERC20Token> | null
     if (!feeOn) {
       totalSupplyAdjusted = totalSupply
     } else {
